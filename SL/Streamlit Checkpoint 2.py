@@ -6,7 +6,7 @@ import sklearn
 from sklearn.linear_model import LogisticRegression
 
 # Loading the Model
-with open('/Users/MY LAPTOP/Desktop/Vs Code Intro/SL/Streamlit Checkpoint 2.pkl', 'rb') as file:
+with open('/Users/MY LAPTOP/Desktop/Vs Code Intro/Streamlit Checkpoint 2.pkl', 'rb') as file:
     saved_objects = pickle.load(file)
 
 logreg = saved_objects["LRmodel"]  # trained model
