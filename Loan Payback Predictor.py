@@ -5,11 +5,11 @@ import joblib
 import sklearn
 from sklearn.linear_model import LogisticRegression
 
-# Loading the Model
-# Load model and scaler
-model = joblib.load('logistic_model.pkl')
-scaler = joblib.load('scaler.pkl')
-encoder = joblib.load('OneHotEncoder.pkl')
+
+# Load model, scaler and encoder
+model = joblib.load(r"C:\Users\MY LAPTOP\Desktop\Vs Code Intro\logistic_model.pkl")
+scaler = joblib.load(r"C:\Users\MY LAPTOP\Desktop\Vs Code Intro\scaler.pkl")
+encoder = joblib.load(r"C:\Users\MY LAPTOP\Desktop\Vs Code Intro\OneHotEncoder.pkl")
 
 
 st.title("Loan Payback Predictor App")
