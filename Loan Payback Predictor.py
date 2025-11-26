@@ -7,9 +7,14 @@ from sklearn.linear_model import LogisticRegression
 
 
 # Load model, scaler and encoder
-model = joblib.load(r"C:/Users/MY LAPTOP/Desktop/Vs Code Intro/logistic_model.pkl")
-scaler = joblib.load(r"C:/Users/MY LAPTOP/Desktop/Vs Code Intro/scaler.pkl")
-encoder = joblib.load(r"C:/Users/MY LAPTOP/Desktop/Vs Code Intro/OneHotEncoder.pkl")
+with open('logistic_model.pkl', 'rb') as f:
+    model = joblib.load(f)
+
+with open('scaler.pkl', 'rb') as fi:
+    scaler = joblib.load(fi)
+
+with open('OneHotEncoder.pkl', 'rb') as file:
+    encoder = joblib.load(file)
 
 
 st.title("Loan Payback Predictor App")
