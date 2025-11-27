@@ -18,7 +18,7 @@ with open('OneHotEncoder.pkl', 'rb') as file:
 
 
 st.title("Loan Payback Predictor App")
-st.write("Enter borrower details to predict probability of default:")
+st.write("Enter borrower details to predict default:")
 
 # Inputs
 credit_policy = st.selectbox("Credit Policy", [0,1])
