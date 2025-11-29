@@ -1,0 +1,64 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import joblib
+import sklearn
+from sklearn.linear_model import LogisticRegression
+
+
+# Load model, scaler and encoder
+with open('logistic_model.pkl', 'rb') as f:
+    model = joblib.load(f)
+
+with open('scaler.pkl', 'rb') as fi:
+    scaler = joblib.load(fi)
+
+with open('OneHotEncoder.pkl', 'rb') as file:
+    encoder = joblib.load(file)
+
+with open('poly_features.pkl', 'rb') as fil:
+    poly = joblib.load(fil)
+
+st.title("Loan Payback Predictor App")
+st.write("Enter borrower details to predict default:")
+
+# Inputs
+credit_policy = st.selectbox("Credit Policy", [0,1])
+purpose = st.selectbox("Loan Purpose", ["credit_card", "debt_consolidation", "educational","major_purchase", "small_business", "all_other"])
+installment = st.number_input("Installment Amount", 0.0)
+log_annual_inc = st.number_input("Log Annual Income", 0.0)
+dti = st.number_input("Debt-to-Income Ratio", 0.0)
+fico = st.number_input("FICO Score", 0)
+delinq_2yrs = st.number_input("Delinquent past 2 yrs", 0)
+
+# Create dataframe
+input_df = pd.DataFrame([[credit_policy, installment, log_annual_inc,dti, fico, delinq_2yrs]],
+                        columns=['credit.policy','installment','log.annual.inc','dti','fico','delinq.2yrs'])
+
+# Manual one-hot encode purpose
+purpose_df = pd.DataFrame({'purpose':[purpose]})
+purpose_encoded = encoder.transform(purpose_df)
+purpose_cols = encoder.get_feature_names_out(['purpose'])
+input_df[purpose_cols] = purpose_encoded
+
+# Interaction features
+input_df['dti_fico_interaction'] = input_df['dti'] * input_df['fico']
+input_df['installment_loginc_interaction'] = input_df['installment'] * input_df['log.annual.inc']
+
+# Scale numeric columns
+scaled_cols = ['installment','log.annual.inc','dti','fico','delinq.2yrs', 'dti_fico_interaction', 'installment_loginc_interaction']
+input_df[scaled_cols] = scaler.transform(input_df[scaled_cols])
+
+# Apply polynomial features
+poly_cols = ['credit.policy','installment', 'log.annual.inc', 'dti', 'fico', 'delinq.2yrs', 'dti_fico_interaction', 'installment_loginc_interaction'] + list(purpose_cols)
+input_poly = poly.transform(input_df[poly_cols])
+
+# Prediction
+if st.button("Validate & Predict"):
+    try:
+        prob = model.predict(input_poly)[0]
+        prediction = 'Loan is risky' if prob == 1 else 'Loan is safe'
+        st.success(f"Prediction: **{prediction}**")
+    except Exception as e:
+        st.error("An error occurred during prediction. Check your inputs.")
+        st.write(e)
